@@ -1,5 +1,6 @@
 /Users/judahbernstein/Code/School/632/CS632-session-manager/session-service/src/main/java/com/example/sessionservice/controller/CheckInController.java
 /Users/judahbernstein/Code/School/632/CS632-session-manager/session-service/src/main/java/com/example/sessionservice/repository/BookmarkRepository.java
+/Users/judahbernstein/Code/School/632/CS632-session-manager/session-service/src/main/java/com/example/sessionservice/repository/CheckInRepository.java
 /Users/judahbernstein/Code/School/632/CS632-session-manager/session-service/src/main/java/com/example/sessionservice/model/CheckIn.java
 /Users/judahbernstein/Code/School/632/CS632-session-manager/session-service/src/main/java/com/example/sessionservice/model/SessionBookmark.java
 /Users/judahbernstein/Code/School/632/CS632-session-manager/session-service/src/main/java/com/example/sessionservice/SessionServiceApplication.java

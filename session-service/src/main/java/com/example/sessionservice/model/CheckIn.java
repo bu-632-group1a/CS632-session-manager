@@ -1,15 +1,24 @@
 package com.example.sessionservice.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "checkins")
 public class CheckIn {
-    private String id;
-    private String sessionCode;
-    private String user;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String code;
+    private String description;
 
     // Getters and setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getSessionCode() { return sessionCode; }
-    public void setSessionCode(String sessionCode) { this.sessionCode = sessionCode; }
-    public String getUser() { return user; }
-    public void setUser(String user) { this.user = user; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }
