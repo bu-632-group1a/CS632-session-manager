@@ -11,7 +11,7 @@ public class Bookmark {
 
     private String code;
     private String description;
-
+    private String userId; // <-- Add this line
     // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -21,4 +21,7 @@ public class Bookmark {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
 }
