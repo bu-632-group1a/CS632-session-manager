@@ -1,5 +1,5 @@
-com/example/sessionservice/model/CheckIn.class
 com/example/sessionservice/controller/CheckInController.class
 com/example/sessionservice/model/SessionBookmark.class
 com/example/sessionservice/controller/SessionBookmarkController.class
+com/example/sessionservice/model/CheckIn.class
 com/example/sessionservice/SessionServiceApplication.class
