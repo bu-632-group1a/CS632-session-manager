@@ -1,11 +1,15 @@
 package com.example.sessionservice.controller;
 
 import com.example.sessionservice.model.CheckIn;
+import com.example.sessionservice.repository.CheckInRepository;
+import com.example.sessionservice.util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.sessionservice.repository.CheckInRepository;
 
-import java.util.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/checkins")
@@ -16,33 +20,44 @@ public class CheckInController {
         this.checkInRepository = checkInRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<CheckIn> create(@RequestBody CheckIn checkIn) {
-        return ResponseEntity.ok(checkInRepository.save(checkIn));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CheckIn> read(@PathVariable Long id) {
-        return checkInRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CheckIn> update(@PathVariable Long id, @RequestBody CheckIn checkIn) {
-        if (!checkInRepository.existsById(id)) return ResponseEntity.notFound().build();
-        checkIn.setId(id);
-        return ResponseEntity.ok(checkInRepository.save(checkIn));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        checkInRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
+    @Operation(summary = "Get a bookmark", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
-    public ResponseEntity<List<CheckIn>> list() {
-        return ResponseEntity.ok(checkInRepository.findAll());
+    public List<CheckIn> getAllCheckIns() {
+        String userId = SecurityUtil.getCurrentUserId();
+        return checkInRepository.findByUserId(userId);
+    }
+
+    @Operation(summary = "Create a bookmark", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping
+    public CheckIn createCheckIn(@RequestBody CheckIn checkIn) {
+        checkIn.setUserId(SecurityUtil.getCurrentUserId());
+        return checkInRepository.save(checkIn);
+    }
+
+    @Operation(summary = "Update a bookmark", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping("/{id}")
+    public ResponseEntity<CheckIn> updateCheckIn(@PathVariable Long id, @RequestBody CheckIn checkIn) {
+        String userId = SecurityUtil.getCurrentUserId();
+        return checkInRepository.findById(id)
+            .filter(c -> c.getUserId().equals(userId))
+            .map(existing -> {
+                existing.setCode(checkIn.getCode());
+                existing.setDescription(checkIn.getDescription());
+                return ResponseEntity.ok(checkInRepository.save(existing));
+            })
+            .orElse(ResponseEntity.status(403).build());
+    }
+
+    @Operation(summary = "Delete a bookmark", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCheckIn(@PathVariable Long id) {
+        String userId = SecurityUtil.getCurrentUserId();
+        return checkInRepository.findById(id)
+            .filter(c -> c.getUserId().equals(userId))
+            .map(c -> {
+                checkInRepository.deleteById(id);
+                return ResponseEntity.noContent().<Void>build();
+            })
+            .orElse(ResponseEntity.status(403).build());
     }
 }
