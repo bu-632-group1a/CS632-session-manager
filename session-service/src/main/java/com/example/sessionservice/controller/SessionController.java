@@ -28,7 +28,7 @@ public class SessionController {
 
     // Only ADMIN can POST
     @Operation(summary = "Create a session", security = @SecurityRequirement(name = "bearerAuth"))
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public Session createSession(@RequestBody Session session) {
         return sessionRepository.save(session);
@@ -36,7 +36,7 @@ public class SessionController {
 
     // Only ADMIN can DELETE
     @Operation(summary = "Delete a session", security = @SecurityRequirement(name = "bearerAuth"))
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSession(@PathVariable Long id) {
         if (sessionRepository.existsById(id)) {

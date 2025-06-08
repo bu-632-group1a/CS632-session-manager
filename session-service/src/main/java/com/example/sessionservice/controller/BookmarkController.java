@@ -5,10 +5,14 @@ import com.example.sessionservice.repository.BookmarkRepository;
 import com.example.sessionservice.util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.List;
 
+/**
+ * Controller for managing user bookmarks.
+ */
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/bookmarks")
@@ -19,21 +23,43 @@ public class BookmarkController {
         this.bookmarkRepository = bookmarkRepository;
     }
 
+    /**
+     * Get all bookmarks for the authenticated user.
+     */
+    @Operation(summary = "Get all bookmarks for the authenticated user")
     @GetMapping
     public List<Bookmark> getAllBookmarks() {
         String userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) {
+            throw new IllegalStateException("User ID not found in security context");
+        }
         return bookmarkRepository.findByUserId(userId);
     }
 
+    /**
+     * Create a new bookmark for the authenticated user.
+     */
+    @Operation(summary = "Create a new bookmark for the authenticated user")
     @PostMapping
     public Bookmark createBookmark(@RequestBody Bookmark bookmark) {
-        bookmark.setUserId(SecurityUtil.getCurrentUserId());
+        String userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) {
+            throw new IllegalStateException("User ID not found in security context");
+        }
+        bookmark.setUserId(userId);
         return bookmarkRepository.save(bookmark);
     }
 
+    /**
+     * Update an existing bookmark for the authenticated user.
+     */
+    @Operation(summary = "Update an existing bookmark for the authenticated user")
     @PutMapping("/{id}")
     public ResponseEntity<Bookmark> updateBookmark(@PathVariable Long id, @RequestBody Bookmark bookmark) {
         String userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         return bookmarkRepository.findById(id)
             .filter(b -> b.getUserId().equals(userId))
             .map(existing -> {
@@ -44,9 +70,16 @@ public class BookmarkController {
             .orElse(ResponseEntity.status(403).build());
     }
 
+    /**
+     * Delete a bookmark for the authenticated user.
+     */
+    @Operation(summary = "Delete a bookmark for the authenticated user")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookmark(@PathVariable Long id) {
         String userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
         return bookmarkRepository.findById(id)
             .filter(b -> b.getUserId().equals(userId))
             .map(b -> {
