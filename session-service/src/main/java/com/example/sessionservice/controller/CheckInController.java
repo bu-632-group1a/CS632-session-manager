@@ -4,6 +4,7 @@ import com.example.sessionservice.model.CheckIn;
 import com.example.sessionservice.repository.CheckInRepository;
 import com.example.sessionservice.util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,13 @@ public class CheckInController {
     public List<CheckIn> getAllCheckIns() {
         String userId = SecurityUtil.getCurrentUserId();
         return checkInRepository.findByUserId(userId);
+    }
+
+    @Operation(summary = "Get all check-ins (admin only)", security = @SecurityRequirement(name = "bearerAuth"))
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public List<CheckIn> getAllCheckInsForAdmin() {
+        return checkInRepository.findAll();
     }
 
     @Operation(summary = "Create a bookmark", security = @SecurityRequirement(name = "bearerAuth"))

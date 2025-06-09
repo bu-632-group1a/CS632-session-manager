@@ -4,6 +4,7 @@ import com.example.sessionservice.model.Bookmark;
 import com.example.sessionservice.repository.BookmarkRepository;
 import com.example.sessionservice.util.SecurityUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,6 +36,17 @@ public class BookmarkController {
         }
         return bookmarkRepository.findByUserId(userId);
     }
+
+    /**
+     * Get all bookmarks for all users (admin only).
+     */
+    @Operation(summary = "Get all bookmarks for all users (admin only)", security = @SecurityRequirement(name = "bearerAuth"))
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public List<Bookmark> getAllBookmarksForAdmin() {
+        return bookmarkRepository.findAll();
+    }
+
 
     /**
      * Create a new bookmark for the authenticated user.
